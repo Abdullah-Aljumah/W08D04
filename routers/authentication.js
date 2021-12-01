@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 const secret = process.env.SECRET_KEY;
 const authentication = (req, res, next) => {
   try {
@@ -11,7 +13,7 @@ const authentication = (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(400).json(error);
+    res.status(403).json(error);
   }
 };
 module.exports = authentication;

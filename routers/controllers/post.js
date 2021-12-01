@@ -28,33 +28,69 @@ const newPost = (req, res) => {
 const softDel = (req, res) => {
   const { _id } = req.params;
   try {
-    postModel.findById({ _id: _id }).then((item) => {
-      if (item.isDel == false) {
-        postModel
-          .findByIdAndUpdate(
-            { _id: _id },
-            { $set: { isDel: true } },
-            { new: true }
-          )
-          .then((result) => {
-            res.status(200).json(result);
-          })
-          .catch((err) => {
-            res.status(400).json(err);
-          });
+    postModel.findOne({ _id: _id }).then((item) => {
+      if (item.user == req.token._id) {
+        postModel.findById({ _id: _id }).then((item) => {
+          if (item.isDel == false) {
+            postModel
+              .findByIdAndUpdate(
+                { _id: _id },
+                { $set: { isDel: true } },
+                { new: true }
+              )
+              .then((result) => {
+                res.status(200).json(result);
+              })
+              .catch((err) => {
+                res.status(400).json(err);
+              });
+          } else {
+            postModel
+              .findByIdAndUpdate(
+                { _id: _id },
+                { $set: { isDel: false } },
+                { new: true }
+              )
+              .then((result) => {
+                res.status(200).json(result);
+              })
+              .catch((err) => {
+                res.status(400).json(err);
+              });
+          }
+        });
+      } else if (req.token.role == "61a734cd947e8eba47efbc68") {
+        postModel.findById({ _id: _id }).then((item) => {
+          if (item.isDel == false) {
+            postModel
+              .findByIdAndUpdate(
+                { _id: _id },
+                { $set: { isDel: true } },
+                { new: true }
+              )
+              .then((result) => {
+                res.status(200).json(result);
+              })
+              .catch((err) => {
+                res.status(400).json(err);
+              });
+          } else {
+            postModel
+              .findByIdAndUpdate(
+                { _id: _id },
+                { $set: { isDel: false } },
+                { new: true }
+              )
+              .then((result) => {
+                res.status(200).json(result);
+              })
+              .catch((err) => {
+                res.status(400).json(err);
+              });
+          }
+        });
       } else {
-        postModel
-          .findByIdAndUpdate(
-            { _id: _id },
-            { $set: { isDel: false } },
-            { new: true }
-          )
-          .then((result) => {
-            res.status(200).json(result);
-          })
-          .catch((err) => {
-            res.status(400).json(err);
-          });
+        res.status(403).send("Forbidden");
       }
     });
   } catch (error) {
@@ -68,8 +104,7 @@ const updatePost = (req, res) => {
   const { desc } = req.body;
   try {
     postModel.findOne({ _id: _id }).then((item) => {
-      // console.log("req.token._id", req.token.role);
-      // console.log("item.user", item);
+      // console.log("Update token ", req.token);
       if (item.user == req.token._id) {
         postModel
           .findOneAndUpdate(
