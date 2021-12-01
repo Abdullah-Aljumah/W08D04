@@ -1,6 +1,6 @@
 const likeModel = require("../../db/models/like");
-const postModel = require("../../db/models/post");
 
+// Toggle like
 const newLike = (req, res) => {
   const { userId, postId } = req.params;
   try {
