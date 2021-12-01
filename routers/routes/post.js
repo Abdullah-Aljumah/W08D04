@@ -7,10 +7,12 @@ const {
   newPost,
   softDel,
   updatePost,
-  getPost,
+  geAllPost,
+  getPost
 } = require("../controllers/post");
 
-postRouter.get("/allPost", getPost);
+postRouter.get("/post/:_id", getPost);
+postRouter.get("/allPost", geAllPost);
 postRouter.put("/updatePost/:_id", updatePost);
 postRouter.post("/newPost/:_id", newPost);
 postRouter.put("/softPost/:_id", softDel);

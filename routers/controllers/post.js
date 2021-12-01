@@ -78,7 +78,7 @@ const updatePost = (req, res) => {
 };
 
 // get post all
-const getPost = (req, res) => {
+const geAllPost = (req, res) => {
   try {
     postModel.find({}).then((result) => {
       res.status(200).json(result);
@@ -88,4 +88,16 @@ const getPost = (req, res) => {
   }
 };
 
-module.exports = { newPost, softDel, updatePost, getPost };
+// get post by id
+const getPost = (req, res) => {
+  const { _id } = req.params;
+  try {
+    postModel.findOne({ _id: _id }).then((result) => {
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+module.exports = { newPost, softDel, updatePost, geAllPost , getPost};
