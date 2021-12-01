@@ -8,7 +8,7 @@ const { resgister, getUsers, login, softDel } = require("../controllers/user");
 userRouter.post("/resgister", resgister);
 userRouter.get("/users", authentication, authorization, getUsers);
 userRouter.post("/login", login);
-userRouter.put("/delete/:_id", softDel);
+userRouter.put("/delete/:_id", authentication, authorization, softDel);
 
 module.exports = userRouter;
 

@@ -1,5 +1,5 @@
 const commentModel = require("../../db/models/comment");
-
+const postModel = require("../../db/models/post");
 const newComment = (req, res) => {
   const { desc } = req.body;
   const { userId, postId } = req.params;
@@ -124,4 +124,30 @@ const getComment = (req, res) => {
   }
 };
 
-module.exports = { newComment, deleteCommet, updateComment, getComment };
+const getPostWithComments = (req, res) => {
+  const { _id } = req.params;
+  try {
+    let test = [];
+    postModel.findOne({ _id: _id }).then((item) => {
+      test.push(item);
+      commentModel.find({ post: _id }).then((result) => {
+        test.push(result);
+        res.status(200).json(test);
+      });
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+module.exports = {
+  newComment,
+  deleteCommet,
+  updateComment,
+  getComment,
+  getPostWithComments,
+};
+
+// {
+//   $in: [_id[({ commentModel }, { postModel })]];
+// }
