@@ -1,6 +1,7 @@
 const commentModel = require("../../db/models/comment");
 const postModel = require("../../db/models/post");
 const likeModel = require("../../db/models/like");
+
 const newComment = (req, res) => {
   const { desc } = req.body;
   const { userId, postId } = req.params;
@@ -125,29 +126,6 @@ const getComment = (req, res) => {
   }
 };
 
-// const getPostWithComments = (req, res) => {
-//   const { _id } = req.params;
-//   try {
-//     let postWithCommentsAndLikes = [];
-//     postModel.findOne({ _id: _id }).then((item) => {
-
-//         postWithCommentsAndLikes.push(item);
-//         commentModel.find({ post: _id }).then((result) => {
-//           postWithCommentsAndLikes.push(result);
-//         });
-//         // likeModel.find({ post: _id }).then((ele) => {
-//         //   postWithCommentsAndLikes.push(ele);
-//         // });
-//         res.status(200).json(postWithCommentsAndLikes);
-
-//         // res.status(404).send("Post not found");
-
-//     });
-//   } catch (error) {
-//     res.status(400).json(error);
-//   }
-// };
-
 const getPostWithComments = (req, res) => {
   const { _id } = req.params;
   try {
@@ -179,7 +157,3 @@ module.exports = {
   getComment,
   getPostWithComments,
 };
-
-// {
-//   $in: [_id[({ commentModel }, { postModel })]];
-// }
