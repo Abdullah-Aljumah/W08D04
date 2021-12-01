@@ -4,20 +4,24 @@ const postModel = require("../../db/models/post");
 const newPost = (req, res) => {
   const { img, desc } = req.body;
   const { _id } = req.params;
-  const newPost = new postModel({
-    img,
-    desc,
-    user: _id,
-  });
-  newPost
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.json(result);
-    })
-    .catch((err) => {
-      res.send(err);
+  try {
+    const newPost = new postModel({
+      img,
+      desc,
+      user: _id,
     });
+    newPost
+      .save()
+      .then((result) => {
+        console.log(result);
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(400).send(err);
+      });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
 
 // soft delete post
@@ -73,4 +77,15 @@ const updatePost = (req, res) => {
   }
 };
 
-module.exports = { newPost, softDel, updatePost };
+// get post all
+const getPost = (req, res) => {
+  try {
+    postModel.find({}).then((result) => {
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+module.exports = { newPost, softDel, updatePost, getPost };
