@@ -1,5 +1,6 @@
+const post = require("../../db/models/post");
 const postModel = require("../../db/models/post");
-
+const commentModel = require("../../db/models/comment");
 // create new post
 const newPost = (req, res) => {
   const { img, desc } = req.body;
@@ -161,4 +162,37 @@ const getPost = (req, res) => {
   }
 };
 
-module.exports = { newPost, softDel, updatePost, geAllPost, getPost };
+// Delete comment owner post
+const deleteCommentOwner = (req, res) => {
+  const { postId, commentId } = req.params;
+  try {
+    postModel.findOne({ _id: postId }).then((item) => {
+      if (item) {
+        if (item.user == req.token._id) {
+          commentModel.findOneAndDelete({ _id: commentId }).then((result) => {
+            if (result) {
+              res.status(200).send("Delete comment succefullty");
+            } else {
+              res.status(404).send("Comment not found");
+            }
+          });
+        } else {
+          res.status(403).send("Forbidden");
+        }
+      } else {
+        res.status(404).send("Post not found");
+      }
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+module.exports = {
+  newPost,
+  softDel,
+  updatePost,
+  geAllPost,
+  getPost,
+  deleteCommentOwner,
+};

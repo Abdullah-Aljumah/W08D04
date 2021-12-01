@@ -126,7 +126,7 @@ const getComment = (req, res) => {
   }
 };
 
-const getPostWithComments = (req, res) => {
+const getPostWithCommentsAndLikes = (req, res) => {
   const { _id } = req.params;
   try {
     let test = [];
@@ -155,5 +155,5 @@ module.exports = {
   deleteCommet,
   updateComment,
   getComment,
-  getPostWithComments,
+  getPostWithCommentsAndLikes,
 };
