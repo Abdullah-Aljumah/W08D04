@@ -153,16 +153,19 @@ const getPostWithComments = (req, res) => {
   try {
     let test = [];
     postModel.findOne({ _id: _id }).then((item) => {
-      test.push(item);
-      commentModel.find({ post: _id }).then((result) => {
-        test.push(result);
-        likeModel.find({ post: _id }).then((ele) => {
-          test.push(ele);
+      if (item.isDel == false) {
+        test.push(item);
+        commentModel.find({ post: _id }).then((result) => {
+          test.push(result);
+          likeModel.find({ post: _id }).then((ele) => {
+            test.push(ele);
 
-          res.status(200).json(test);
+            res.status(200).json(test);
+          });
         });
-        // res.status(200).json(test);
-      });
+      } else {
+        res.status(404).json("Post is deleted");
+      }
     });
   } catch (error) {
     res.status(400).json(error);
