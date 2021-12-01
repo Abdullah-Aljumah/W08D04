@@ -1,8 +1,6 @@
 const userModel = require("../../db/models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { findOneAndUpdate } = require("../../db/models/user");
-const user = require("../../db/models/user");
 
 const salt = Number(process.env.SALT);
 const secret = process.env.SECRET_KEY;
