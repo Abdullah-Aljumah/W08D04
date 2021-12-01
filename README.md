@@ -1,12 +1,14 @@
-# Social media 
+# Social media
 
-## Roters 
+## Routers
 
-- Add and delete and upadte and show comments (Only owner comments and admins )
+- Resgister and login.
 
-- Add and delete and upadte and show posts (Only owner posts and admins )
+- Add and delete and upadte and show users.
 
-- Add and delete and upadte and show users (Only owner user and admins )
+- Add and delete and upadte and show comments ( Only owner comments and admins can delete and update ).
+
+- Add and delete and upadte and show posts ( Only owner posts and admins can delete and update ).
 
 ## Dependencies
 
