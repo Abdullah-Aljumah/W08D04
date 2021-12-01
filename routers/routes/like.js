@@ -5,6 +5,6 @@ const authorization = require("../authorization");
 
 const { newLike } = require("../controllers/like");
 
-likeRouter.post("/like/:userId/:postId", newLike);
+likeRouter.post("/like/:userId/:postId", authentication,newLike);
 
 module.exports = likeRouter;
