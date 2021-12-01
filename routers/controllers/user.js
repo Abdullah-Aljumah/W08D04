@@ -51,9 +51,10 @@ const login = (req, res) => {
         if (result.email == data || result.username == data) {
           const savedPassword = await bcrypt.compare(password, result.password);
           const payload = {
+            _id: result._id,
             role: result.role,
           };
-
+          console.log("payload", payload);
           if (savedPassword) {
             let token = jwt.sign(payload, secret);
             res.status(200).json({ result, token });

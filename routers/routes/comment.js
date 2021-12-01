@@ -3,7 +3,16 @@ const commentRouter = express.Router();
 const authentication = require("../authentication");
 const authorization = require("../authorization");
 
-const { newComment, deleteCommet } = require("../controllers/comment");
+const {
+  newComment,
+  deleteCommet,
+  updateComment,
+  getComment,
+} = require("../controllers/comment");
+
 commentRouter.post("/newComment/:userId/:postId", newComment);
 commentRouter.delete("/deletecomment/:_id", deleteCommet);
+commentRouter.put("/updatecomment/:_id", updateComment);
+commentRouter.get("/getComment/:_id", getComment);
+
 module.exports = commentRouter;

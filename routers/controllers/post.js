@@ -2,7 +2,7 @@ const postModel = require("../../db/models/post");
 
 // create new post
 const newPost = (req, res) => {
-  const { img, desc, time } = req.body;
+  const { img, desc } = req.body;
   const { _id } = req.params;
   try {
     const newPost = new postModel({
@@ -67,17 +67,35 @@ const updatePost = (req, res) => {
   const { _id } = req.params;
   const { desc } = req.body;
   try {
-    postModel
-      .findOneAndUpdate(
-        { _id: _id },
-        { $set: { desc: desc, time: Date() } },
-        { new: true }
-      )
-      .then((result) => {
-        res.status(200).json(result);
-      });
+    postModel.findOne({ _id: _id }).then((item) => {
+      // console.log("req.token._id", req.token.role);
+      // console.log("item.user", item);
+      if (item.user == req.token._id) {
+        postModel
+          .findOneAndUpdate(
+            { _id: _id },
+            { $set: { desc: desc, time: Date() } },
+            { new: true }
+          )
+          .then((result) => {
+            res.status(200).json(result);
+          });
+      } else if (req.token.role == "61a734cd947e8eba47efbc68") {
+        postModel
+          .findOneAndUpdate(
+            { _id: _id },
+            { $set: { desc: desc, time: Date() } },
+            { new: true }
+          )
+          .then((result) => {
+            res.status(200).json(result);
+          });
+      } else {
+        res.status(403).send("forbbiden");
+      }
+    });
   } catch (error) {
-    res.status(404).json(error);
+    res.status(400).json(error);
   }
 };
 
