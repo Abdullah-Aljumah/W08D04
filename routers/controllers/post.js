@@ -2,18 +2,18 @@ const postModel = require("../../db/models/post");
 
 // create new post
 const newPost = (req, res) => {
-  const { img, desc } = req.body;
+  const { img, desc, time } = req.body;
   const { _id } = req.params;
   try {
     const newPost = new postModel({
       img,
       desc,
+      time: Date(),
       user: _id,
     });
     newPost
       .save()
       .then((result) => {
-        console.log(result);
         res.status(200).json(result);
       })
       .catch((err) => {
@@ -68,7 +68,11 @@ const updatePost = (req, res) => {
   const { desc } = req.body;
   try {
     postModel
-      .findOneAndUpdate({ _id: _id }, { $set: { desc: desc } }, { new: true })
+      .findOneAndUpdate(
+        { _id: _id },
+        { $set: { desc: desc, time: Date() } },
+        { new: true }
+      )
       .then((result) => {
         res.status(200).json(result);
       });
@@ -80,7 +84,7 @@ const updatePost = (req, res) => {
 // get post all
 const geAllPost = (req, res) => {
   try {
-    postModel.find({}).then((result) => {
+    postModel.find({ isDel: false }).then((result) => {
       res.status(200).json(result);
     });
   } catch (error) {
@@ -93,11 +97,15 @@ const getPost = (req, res) => {
   const { _id } = req.params;
   try {
     postModel.findOne({ _id: _id }).then((result) => {
-      res.status(200).json(result);
+      if (result.isDel == false) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).send("Post deleted");
+      }
     });
   } catch (error) {
     res.status(400).json(error);
   }
 };
 
-module.exports = { newPost, softDel, updatePost, geAllPost , getPost};
+module.exports = { newPost, softDel, updatePost, geAllPost, getPost };
