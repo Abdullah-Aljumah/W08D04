@@ -9,10 +9,14 @@ const getUsers = (req, res) => {
   userModel
     .find({})
     .then((result) => {
-      res.send(result);
+      if (result) {
+        res.send(result);
+      } else {
+        res.status(400).send("Users not found");
+      }
     })
     .catch((err) => {
-      res.send(err);
+      res.status(400).json(err);
     });
 };
 
@@ -78,33 +82,37 @@ const softDel = (req, res) => {
   const { _id } = req.params;
   try {
     userModel.findById({ _id: _id }).then((item) => {
-      if (item.isDel == false) {
-        userModel
-          .findByIdAndUpdate(
-            { _id: _id },
-            { $set: { isDel: true } },
-            { new: true }
-          )
-          .then((result) => {
-            res.status(200).json(result);
-          })
-          .catch((err) => {
-            res.status(400).json(err);
-          });
+      if (item) {
+        if (item.isDel == false) {
+          userModel
+            .findByIdAndUpdate(
+              { _id: _id },
+              { $set: { isDel: true } },
+              { new: true }
+            )
+            .then((result) => {
+              res.status(200).json(result);
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+        } else {
+          userModel
+            .findByIdAndUpdate(
+              { _id: _id },
+              { $set: { isDel: false } },
+              { new: true }
+            )
+            .then((result) => {
+              console.log(result);
+              res.status(200).json(result);
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+        }
       } else {
-        userModel
-          .findByIdAndUpdate(
-            { _id: _id },
-            { $set: { isDel: false } },
-            { new: true }
-          )
-          .then((result) => {
-            console.log(result);
-            res.status(200).json(result);
-          })
-          .catch((err) => {
-            res.status(400).json(err);
-          });
+        res.status(400).send("User not found");
       }
     });
   } catch (error) {

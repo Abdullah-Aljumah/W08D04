@@ -6,20 +6,24 @@ const newPost = (req, res) => {
   const { img, desc } = req.body;
   const { _id } = req.params;
   try {
-    const newPost = new postModel({
-      img,
-      desc,
-      time: Date(),
-      user: _id,
-    });
-    newPost
-      .save()
-      .then((result) => {
-        res.status(200).json(result);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
+    if (req.token._id == _id) {
+      const newPost = new postModel({
+        img,
+        desc,
+        time: Date(),
+        user: _id,
       });
+      newPost
+        .save()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          res.status(400).json(err);
+        });
+    } else {
+      res.status(403).json({ message: "forbidden" });
+    }
   } catch (error) {
     res.status(400).send(error);
   }
@@ -30,68 +34,45 @@ const softDel = (req, res) => {
   const { _id } = req.params;
   try {
     postModel.findOne({ _id: _id }).then((item) => {
-      if (item.user == req.token._id) {
-        postModel.findById({ _id: _id }).then((item) => {
-          if (item.isDel == false) {
-            postModel
-              .findByIdAndUpdate(
-                { _id: _id },
-                { $set: { isDel: true } },
-                { new: true }
-              )
-              .then((result) => {
-                res.status(200).json(result);
-              })
-              .catch((err) => {
-                res.status(400).json(err);
-              });
-          } else {
-            postModel
-              .findByIdAndUpdate(
-                { _id: _id },
-                { $set: { isDel: false } },
-                { new: true }
-              )
-              .then((result) => {
-                res.status(200).json(result);
-              })
-              .catch((err) => {
-                res.status(400).json(err);
-              });
-          }
-        });
-      } else if (req.token.role == "61a734cd947e8eba47efbc68") {
-        postModel.findById({ _id: _id }).then((item) => {
-          if (item.isDel == false) {
-            postModel
-              .findByIdAndUpdate(
-                { _id: _id },
-                { $set: { isDel: true } },
-                { new: true }
-              )
-              .then((result) => {
-                res.status(200).json(result);
-              })
-              .catch((err) => {
-                res.status(400).json(err);
-              });
-          } else {
-            postModel
-              .findByIdAndUpdate(
-                { _id: _id },
-                { $set: { isDel: false } },
-                { new: true }
-              )
-              .then((result) => {
-                res.status(200).json(result);
-              })
-              .catch((err) => {
-                res.status(400).json(err);
-              });
-          }
-        });
+      if (item) {
+        if (
+          item.user == req.token._id ||
+          req.token.role == "61a734cd947e8eba47efbc68"
+        ) {
+          postModel.findById({ _id: _id }).then((item) => {
+            if (item.isDel == false) {
+              postModel
+                .findByIdAndUpdate(
+                  { _id: _id },
+                  { $set: { isDel: true } },
+                  { new: true }
+                )
+                .then((result) => {
+                  res.status(200).json(result);
+                })
+                .catch((err) => {
+                  res.status(400).json(err);
+                });
+            } else {
+              postModel
+                .findByIdAndUpdate(
+                  { _id: _id },
+                  { $set: { isDel: false } },
+                  { new: true }
+                )
+                .then((result) => {
+                  res.status(200).json(result);
+                })
+                .catch((err) => {
+                  res.status(400).json(err);
+                });
+            }
+          });
+        } else {
+          res.status(403).json({ message: "forbidden" });
+        }
       } else {
-        res.status(403).send("Forbidden");
+        res.status(404).send("Post not found");
       }
     });
   } catch (error) {
@@ -105,29 +86,32 @@ const updatePost = (req, res) => {
   const { desc } = req.body;
   try {
     postModel.findOne({ _id: _id }).then((item) => {
-      // console.log("Update token ", req.token);
-      if (item.user == req.token._id) {
-        postModel
-          .findOneAndUpdate(
-            { _id: _id },
-            { $set: { desc: desc, time: Date() } },
-            { new: true }
-          )
-          .then((result) => {
-            res.status(200).json(result);
-          });
-      } else if (req.token.role == "61a734cd947e8eba47efbc68") {
-        postModel
-          .findOneAndUpdate(
-            { _id: _id },
-            { $set: { desc: desc, time: Date() } },
-            { new: true }
-          )
-          .then((result) => {
-            res.status(200).json(result);
-          });
+      if (item) {
+        if (item.user == req.token._id) {
+          postModel
+            .findOneAndUpdate(
+              { _id: _id },
+              { $set: { desc: desc, time: Date() } },
+              { new: true }
+            )
+            .then((result) => {
+              res.status(200).json(result);
+            });
+        } else if (req.token.role == "61a734cd947e8eba47efbc68") {
+          postModel
+            .findOneAndUpdate(
+              { _id: _id },
+              { $set: { desc: desc, time: Date() } },
+              { new: true }
+            )
+            .then((result) => {
+              res.status(200).json(result);
+            });
+        } else {
+          res.status(403).json({ message: "forbidden" });
+        }
       } else {
-        res.status(403).send("forbbiden");
+        res.status(404).send("Post not found");
       }
     });
   } catch (error) {
@@ -139,7 +123,11 @@ const updatePost = (req, res) => {
 const geAllPost = (req, res) => {
   try {
     postModel.find({ isDel: false }).then((result) => {
-      res.status(200).json(result);
+      if (result) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).send("Posts not found");
+      }
     });
   } catch (error) {
     res.status(400).json(error);
@@ -151,10 +139,14 @@ const getPost = (req, res) => {
   const { _id } = req.params;
   try {
     postModel.findOne({ _id: _id }).then((result) => {
-      if (result.isDel == false) {
-        res.status(200).json(result);
+      if (result) {
+        if (result.isDel == false) {
+          res.status(200).json(result);
+        } else {
+          res.status(404).send("Post deleted");
+        }
       } else {
-        res.status(404).send("Post deleted");
+        res.status(404).send("Post Not found");
       }
     });
   } catch (error) {
@@ -166,9 +158,8 @@ const getPost = (req, res) => {
 const deleteCommentOwner = (req, res) => {
   const { postId, commentId } = req.params;
   try {
-    console.log(postId.length, "HEEEEEEEEEEEEEEERE");
-    if (postId.length > 24) {
-      res.status(404).send("Post id error");
+    if (postId.length > 24 || postId.length < 24) {
+      res.status(404).json({ message: "Post error" });
     } else {
       postModel.findById({ _id: postId }).then((item) => {
         if (item) {
@@ -212,29 +203,35 @@ module.exports = {
   deleteCommentOwner,
 };
 
-// Delete comment owner post
-
-// const deleteCommentOwner = (req, res) => {
-//   const { postId, commentId } = req.params;
-//   try {
-//     postModel.findOne({ _id: postId }).then((item) => {
-//       if (item) {
-//         if (item.user == req.token._id) {
-//           commentModel.findOneAndDelete({ _id: commentId }).then((result) => {
-//             if (result) {
-//               res.status(200).send("Delete comment succefullty");
-//             } else {
-//               res.status(404).send("Comment not found");
-//             }
-//           });
-//         } else {
-//           res.status(403).send("Forbidden");
-//         }
-//       } else {
-//         res.status(404).send("Post not found");
-//       }
-//     });
-//   } catch (error) {
-//     res.status(400).json(error);
-//   }
-// };
+// else if (req.token.role == "61a734cd947e8eba47efbc68") {
+//   postModel.findById({ _id: _id }).then((item) => {
+//     if (item.isDel == false) {
+//       postModel
+//         .findByIdAndUpdate(
+//           { _id: _id },
+//           { $set: { isDel: true } },
+//           { new: true }
+//         )
+//         .then((result) => {
+//           res.status(200).json(result);
+//         })
+//         .catch((err) => {
+//           res.status(400).json(err);
+//         });
+//     }
+//     else {
+//       postModel
+//         .findByIdAndUpdate(
+//           { _id: _id },
+//           { $set: { isDel: false } },
+//           { new: true }
+//         )
+//         .then((result) => {
+//           res.status(200).json(result);
+//         })
+//         .catch((err) => {
+//           res.status(400).json(err);
+//         });
+//     }
+//   });
+// }
