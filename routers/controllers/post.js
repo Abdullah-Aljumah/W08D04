@@ -1,4 +1,4 @@
-const post = require("../../db/models/post");
+// const post = require("../../db/models/post");
 const postModel = require("../../db/models/post");
 const commentModel = require("../../db/models/comment");
 // create new post
@@ -166,25 +166,40 @@ const getPost = (req, res) => {
 const deleteCommentOwner = (req, res) => {
   const { postId, commentId } = req.params;
   try {
-    postModel.findOne({ _id: postId }).then((item) => {
-      if (item) {
-        if (item.user == req.token._id) {
-          commentModel.findOneAndDelete({ _id: commentId }).then((result) => {
-            if (result) {
-              res.status(200).send("Delete comment succefullty");
-            } else {
-              res.status(404).send("Comment not found");
-            }
-          });
+    console.log(postId.length, "HEEEEEEEEEEEEEEERE");
+    if (postId.length > 24) {
+      res.status(404).send("Post id error");
+    } else {
+      postModel.findById({ _id: postId }).then((item) => {
+        if (item) {
+          if (item.user == req.token._id) {
+            commentModel.findOne({ _id: commentId }).then((result) => {
+              if (result) {
+                if (result.post.toString() == item._id.toString()) {
+                  commentModel
+                    .findOne({ _id: commentId })
+                    .remove()
+                    .exec()
+                    .then(() => {
+                      res.status(200).send("Delete comment succefullty");
+                    });
+                } else {
+                  res.status(403).send("Forbidden");
+                }
+              } else {
+                res.status(404).send("Comment not found");
+              }
+            });
+          } else {
+            res.status(403).send("Forbidden");
+          }
         } else {
-          res.status(403).send("Forbidden");
+          res.status(404).send("Post not found");
         }
-      } else {
-        res.status(404).send("Post not found");
-      }
-    });
+      });
+    }
   } catch (error) {
-    res.status(400).json(error);
+    res.status(404).json(error);
   }
 };
 
@@ -196,3 +211,30 @@ module.exports = {
   getPost,
   deleteCommentOwner,
 };
+
+// Delete comment owner post
+
+// const deleteCommentOwner = (req, res) => {
+//   const { postId, commentId } = req.params;
+//   try {
+//     postModel.findOne({ _id: postId }).then((item) => {
+//       if (item) {
+//         if (item.user == req.token._id) {
+//           commentModel.findOneAndDelete({ _id: commentId }).then((result) => {
+//             if (result) {
+//               res.status(200).send("Delete comment succefullty");
+//             } else {
+//               res.status(404).send("Comment not found");
+//             }
+//           });
+//         } else {
+//           res.status(403).send("Forbidden");
+//         }
+//       } else {
+//         res.status(404).send("Post not found");
+//       }
+//     });
+//   } catch (error) {
+//     res.status(400).json(error);
+//   }
+// };
