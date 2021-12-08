@@ -44,6 +44,11 @@ npm i jsonwebtoken
   to save our data
   here the website [Mongoose](https://account.mongodb.com)
 
+# UML
+
+![UML social media](https://user-images.githubusercontent.com/92247941/145218211-eac8acab-9172-48f1-a86d-f3c05ce043e2.png)
+
+
 ## Author
 
 @Abdullah-Aljumah
