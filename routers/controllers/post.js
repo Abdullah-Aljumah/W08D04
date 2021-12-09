@@ -32,6 +32,8 @@ const newPost = (req, res) => {
 // soft delete post
 const softDel = (req, res) => {
   const { _id } = req.params;
+  console.log("REQ");
+
   try {
     postModel.findOne({ _id: _id }).then((item) => {
       if (item) {
@@ -122,7 +124,7 @@ const updatePost = (req, res) => {
 // get post all
 const geAllPost = (req, res) => {
   try {
-    postModel.find({ isDel: false }).then((result) => {
+    postModel.find({ isDel: false }).populate("user","username").then((result) => {
       if (result) {
         res.status(200).json(result);
       } else {
@@ -194,6 +196,23 @@ const deleteCommentOwner = (req, res) => {
   }
 };
 
+const getUserPost = (req, res) => {
+  const { _id } = req.params;
+
+  try {
+    postModel.find({ user: _id }).then((result) => {
+      if (result) {
+        console.log(result,"result");
+        res.status(200).json(result);
+      } else {
+        res.status(404).send("Posts Not found");
+      }
+    });
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+
 module.exports = {
   newPost,
   softDel,
@@ -201,6 +220,7 @@ module.exports = {
   geAllPost,
   getPost,
   deleteCommentOwner,
+  getUserPost,
 };
 
 // else if (req.token.role == "61a734cd947e8eba47efbc68") {

@@ -29,4 +29,20 @@ const newLike = (req, res) => {
   }
 };
 
-module.exports = { newLike };
+const likeCount = (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    likeModel.find({ post: id }).then((result) => {
+      if (result) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).send("Not found");
+      }
+    });
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+
+module.exports = { newLike, likeCount };

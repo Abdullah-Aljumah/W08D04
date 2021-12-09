@@ -6,6 +6,7 @@ const user = new mongoose.Schema({
   password: { type: String, require: true },
   isDel: { type: Boolean, default: false },
   avatar: { type: String },
+  confirm: { type: Boolean },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
