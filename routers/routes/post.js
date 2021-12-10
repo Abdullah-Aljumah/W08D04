@@ -19,7 +19,7 @@ postRouter.delete(
   authentication,
   deleteCommentOwner
 );
-postRouter.get("/post/:_id", authentication, getPost);
+postRouter.get("/post/:_id", getPost);
 postRouter.get("/allPost", geAllPost);
 postRouter.put("/updatePost/:_id", authentication, updatePost);
 postRouter.post("/newPost/:_id", authentication, newPost);

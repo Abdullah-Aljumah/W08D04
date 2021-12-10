@@ -222,36 +222,3 @@ module.exports = {
   deleteCommentOwner,
   getUserPost,
 };
-
-// else if (req.token.role == "61a734cd947e8eba47efbc68") {
-//   postModel.findById({ _id: _id }).then((item) => {
-//     if (item.isDel == false) {
-//       postModel
-//         .findByIdAndUpdate(
-//           { _id: _id },
-//           { $set: { isDel: true } },
-//           { new: true }
-//         )
-//         .then((result) => {
-//           res.status(200).json(result);
-//         })
-//         .catch((err) => {
-//           res.status(400).json(err);
-//         });
-//     }
-//     else {
-//       postModel
-//         .findByIdAndUpdate(
-//           { _id: _id },
-//           { $set: { isDel: false } },
-//           { new: true }
-//         )
-//         .then((result) => {
-//           res.status(200).json(result);
-//         })
-//         .catch((err) => {
-//           res.status(400).json(err);
-//         });
-//     }
-//   });
-// }
