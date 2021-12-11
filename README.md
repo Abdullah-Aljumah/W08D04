@@ -92,6 +92,15 @@ role model
 ![UML front todo](https://user-images.githubusercontent.com/92247941/145216236-62379e90-1a76-4f68-b74f-00b2c659ec97.png)
 
 
+# UML
+
+![UML social media](https://user-images.githubusercontent.com/92247941/145218211-eac8acab-9172-48f1-a86d-f3c05ce043e2.png)
+
+# ERD
+
+![Screenshot (114)](https://user-images.githubusercontent.com/92247941/145219878-dfdd68ab-b0ac-4066-ab2d-53bd9b83c33e.png)
+
+
 ## Author
 
 @Abdullah-Aljumah
