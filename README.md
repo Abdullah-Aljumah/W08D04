@@ -1,48 +1,96 @@
-# Social Media
+# User stories
 
-## Routers
+- **Register**: As a new user you can register in the website.
 
-- Resgister and login.
+- **Login**: You can login to the website and keep you login.
 
-- Add and delete and upadte and show users.
+- **Logout**: You can logout.
 
-- Add and delete and upadte and show comments ( Only owner comments and admins can delete and update ).
+- **Show** tasks: You can see all your tasks.
 
-- Add and delete and upadte and show posts ( Only owner posts and admins can delete and update ).
+- **Update task**: You can update your tasks.
 
-## Dependencies
+- **Delete task**: You can delete your tasks.
 
-- Dotenv
-  to hide our content keys
+- **Create task**: You can create new task.
+
+# Todo fronend
+
+| Path      | Permissions | Behavior                                             |
+| --------- | ----------- | ---------------------------------------------------- |
+| /         | Public      | Login, if you already login well show all your tasks |
+| /register | Public      | Register new user                                    |
+
+# Components
+
+- **Login**
+
+- **Register**
+
+- **Tasks**
+
+# Todo Backend
+
+## Models
+
+user model
 
 ```bash
-npm i dotenv
+ email: { type: String, required: true, unique: true },
+  password: { type: String, require: true },
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
 ```
 
-- Express
-  to build our server
+task model
 
 ```bash
-npm i express
+ task: { type: String },
+  isDel: { type: Boolean, default: false },
+  isCompleted: { type: Boolean, default: false },
+  user: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 ```
 
-- bcrypt
-  to bcrypt our passwords
+role model
 
 ```bash
-npm i bcrypt
+ role: { type: String },
+  permossion: { type: Array },
 ```
 
-- jsonwebtoken
-  genreate tokens
+# Backend routes
 
-```bash
-npm i jsonwebtoken
-```
+## Tasks
 
-- Mongoose
-  to save our data
-  here the website [Mongoose](https://account.mongodb.com)
+| HTTP METHOD | URL               | Permissions | Behavior                          |
+| ----------- | ----------------- | ----------- | --------------------------------- |
+| POST        | /newTask/:\_id    | Public      | Create new task                   |
+| PUT         | /deletetask/:\_id | Public      | Soft delete task                  |
+| PUT         | /update/:\_id     | Public      | Toggle is complete (true / false) |
+| PUT         | /upadteVal/:\_id  | Public      | Update task                       |
+| GET         | /todoss/:\_id     | Public      | Get task by id                    |
+| GET         | /tasks            | Private     | Get all users task                |
+
+## User
+
+| HTTP METHOD | URL               | Permissions | Behavior        |
+| ----------- | ----------------- | ----------- | --------------- |
+| DELETE      | /deleteUser/:\_id | Private     | Delete user     |
+| POST        | /register         | Public      | Create new user |
+| POST        | /login            | Public      | Login           |
+| GET         | /users            | Private     | Get all users   |
+
+## Role
+
+| HTTP METHOD | URL      | Permissions | Behavior        |
+| ----------- | -------- | ----------- | --------------- |
+| POST        | /newRole | Private     | Create new role |
+| GET         | /roles   | Private     | Get all roles   |
+
+
+# UML frontend
+
+![UML front todo](https://user-images.githubusercontent.com/92247941/145216236-62379e90-1a76-4f68-b74f-00b2c659ec97.png)
+
 
 ## Author
 

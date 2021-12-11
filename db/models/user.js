@@ -6,12 +6,13 @@ const user = new mongoose.Schema({
   password: { type: String, require: true },
   isDel: { type: Boolean, default: false },
   avatar: { type: String },
-  confirm: { type: Boolean },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",
     default: "61a734d2947e8eba47efbc6a",
   },
+  activate: { type: Boolean, default: false },
+  activateCode: { type: String },
 });
 
 module.exports = mongoose.model("User", user);
