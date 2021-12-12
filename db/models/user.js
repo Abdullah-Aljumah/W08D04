@@ -13,6 +13,8 @@ const user = new mongoose.Schema({
   },
   activate: { type: Boolean, default: false },
   activateCode: { type: String },
+  resetPass: { type: Boolean, default: false },
+  resetCode: { type: String, },
 });
 
 module.exports = mongoose.model("User", user);

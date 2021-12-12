@@ -2,10 +2,26 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 require("./db");
+const passport = require("passport");
+const session = require("express-session");
+const authRoutes = require("./routers/routes/auth");
+require("./routers/passport");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 const roleRouter = require("./routers/routes/role");
 app.use(roleRouter);
 const userRouter = require("./routers/routes/user");
