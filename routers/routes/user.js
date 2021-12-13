@@ -17,8 +17,9 @@ const {
   getUserByEmail,
   sendCodeResetPass,
 } = require("../controllers/user");
+
 userRouter.get("/userEmail/:email", getUserByEmail);
-userRouter.put("/resetEmailCode/:email", sendCodeResetPass);
+userRouter.post("/resetEmailCode/:email", sendCodeResetPass);
 
 userRouter.get("/user/:_id", getUser);
 userRouter.put("/activate/:_id", activatetUser);
@@ -28,7 +29,6 @@ userRouter.post("/resgister", resgister);
 userRouter.get("/users", getUsers);
 userRouter.post("/login", login);
 userRouter.put("/delete/:_id", authentication, authorization, softDel);
-
 
 userRouter.get(
   "/auth/google",

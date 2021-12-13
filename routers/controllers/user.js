@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const salt = Number(process.env.SALT);
 const secret = process.env.SECRET_KEY;
 
+
 const getUsers = (req, res) => {
   userModel
     .find({})
@@ -234,36 +235,46 @@ const sendCodeResetPass = (req, res) => {
       { email: email },
       { $set: { resetPass: true, resetCode: code } }
     )
-    .then(async (res) => {
-      if (res) {
-        let mailTransporter = nodemailer.createTransport({
-          host: "smtp.gmail.com",
-          port: 465,
-          secure: true,
-          requireTLS: true,
-          auth: {
-            user: "w08d04socialmedia@gmail.com",
-            pass: "Aa112233",
-          },
-        });
-        console.log(res.email, "RRRRRRRRRRRRRR");
-        let mail = {
-          from: "w08d04socialmedia@gmail.com",
-          to: res.email,
-          subject: "Reset your passwor",
-          text: `Please enter this code ${code} ,Thank you!`,
-        };
-        await mailTransporter.sendMail(mail, (err, data) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Email sent");
-            res.status(200).json(res);
-          }
-        });
+    .then(async (result) => {
+      try {
+        if (result) {
+          let mailTransporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            requireTLS: true,
+            auth: {
+              user: "w08d04socialmedia@gmail.com",
+              pass: "Aa112233",
+            },
+          });
+          let mail = {
+            from: "w08d04socialmedia@gmail.com",
+            to: result.email,
+            subject: "Reset your passwor",
+            text: `Please enter this code ${code} ,Thank you!`,
+          };
+          await mailTransporter.sendMail(mail, (err, data) => {  
+            if (err) {
+              console.log(err);
+            } else {
+              // console.log(data);
+              console.log("Email sent");
+              
+              res.status(200).json(result);
+            }
+          });
+        }
+      } catch (error) {
+        console.log("ererererer",error);
       }
-    });
+      
+        // res.status(200).json(res);
+     
+    }).catch((err)=> console.log(err));
 };
+
+
 module.exports = {
   resgister,
   getUsers,
