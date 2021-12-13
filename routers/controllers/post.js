@@ -6,24 +6,20 @@ const newPost = (req, res) => {
   const { img, desc } = req.body;
   const { _id } = req.params;
   try {
-    if (req.token._id == _id) {
-      const newPost = new postModel({
-        img,
-        desc,
-        time: Date(),
-        user: _id,
+    const newPost = new postModel({
+      img,
+      desc,
+      time: Date(),
+      user: _id,
+    });
+    newPost
+      .save()
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
       });
-      newPost
-        .save()
-        .then((result) => {
-          res.status(200).json(result);
-        })
-        .catch((err) => {
-          res.status(400).json(err);
-        });
-    } else {
-      res.status(403).json({ message: "forbidden" });
-    }
   } catch (error) {
     res.status(400).send(error);
   }
@@ -37,10 +33,7 @@ const softDel = (req, res) => {
   try {
     postModel.findOne({ _id: _id }).then((item) => {
       if (item) {
-        if (
-          item.user == req.token._id ||
-          req.token.role == "61a734cd947e8eba47efbc68"
-        ) {
+        {
           postModel.findById({ _id: _id }).then((item) => {
             if (item.isDel == false) {
               postModel
@@ -70,8 +63,6 @@ const softDel = (req, res) => {
                 });
             }
           });
-        } else {
-          res.status(403).json({ message: "forbidden" });
         }
       } else {
         res.status(404).send("Post not found");
@@ -89,29 +80,25 @@ const updatePost = (req, res) => {
   try {
     postModel.findOne({ _id: _id }).then((item) => {
       if (item) {
-        if (item.user == req.token._id) {
-          postModel
-            .findOneAndUpdate(
-              { _id: _id },
-              { $set: { desc: desc, time: Date() } },
-              { new: true }
-            )
-            .then((result) => {
-              res.status(200).json(result);
-            });
-        } else if (req.token.role == "61a734cd947e8eba47efbc68") {
-          postModel
-            .findOneAndUpdate(
-              { _id: _id },
-              { $set: { desc: desc, time: Date() } },
-              { new: true }
-            )
-            .then((result) => {
-              res.status(200).json(result);
-            });
-        } else {
-          res.status(403).json({ message: "forbidden" });
-        }
+        postModel
+          .findOneAndUpdate(
+            { _id: _id },
+            { $set: { desc: desc, time: Date() } },
+            { new: true }
+          )
+          .then((result) => {
+            res.status(200).json(result);
+          });
+
+        postModel
+          .findOneAndUpdate(
+            { _id: _id },
+            { $set: { desc: desc, time: Date() } },
+            { new: true }
+          )
+          .then((result) => {
+            res.status(200).json(result);
+          });
       } else {
         res.status(404).send("Post not found");
       }
@@ -124,13 +111,16 @@ const updatePost = (req, res) => {
 // get post all
 const geAllPost = (req, res) => {
   try {
-    postModel.find({ isDel: false }).populate("user","username").then((result) => {
-      if (result) {
-        res.status(200).json(result);
-      } else {
-        res.status(404).send("Posts not found");
-      }
-    });
+    postModel
+      .find({ isDel: false })
+      .populate("user", "username avatar")
+      .then((result) => {
+        if (result) {
+          res.status(200).json(result);
+        } else {
+          res.status(404).send("Posts not found");
+        }
+      });
   } catch (error) {
     res.status(400).json(error);
   }
@@ -202,7 +192,7 @@ const getUserPost = (req, res) => {
   try {
     postModel.find({ user: _id }).then((result) => {
       if (result) {
-        console.log(result,"result");
+        console.log(result, "result");
         res.status(200).json(result);
       } else {
         res.status(404).send("Posts Not found");

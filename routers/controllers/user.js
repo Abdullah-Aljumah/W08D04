@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const salt = Number(process.env.SALT);
 const secret = process.env.SECRET_KEY;
 
-
 const getUsers = (req, res) => {
   userModel
     .find({})
@@ -127,34 +126,41 @@ const resgister = async (req, res) => {
 
 const login = (req, res) => {
   const { data, password } = req.body;
-  console.log(data);
-  userModel
-    .findOne({ $or: [{ email: data }, { username: data }] })
-    .then(async (result) => {
-      if (result) {
-        if (result.email == data || result.username == data) {
-          const savedPassword = await bcrypt.compare(password, result.password);
-          const payload = {
-            _id: result._id,
-            role: result.role,
-          };
-          console.log("payload", payload);
-          if (savedPassword && result.activate === true) {
-            let token = jwt.sign(payload, secret);
-            res.status(200).json({ result, token });
+  try {
+    userModel
+      .findOne({ $or: [{ email: data }, { username: data }] })
+      .then(async (result) => {
+        if (result) {
+          if (result.email == data || result.username == data) {
+            const savedPassword = await bcrypt.compare(
+              password,
+              result.password
+            );
+            const payload = {
+              _id: result._id,
+              role: result.role,
+            };
+            if (savedPassword && result.activate === true) {
+              let token = jwt.sign(payload, secret);
+              res.status(200).json({ result, token });
+            } else {
+              // res.status(400).json("Wrong email or password");
+              res.status(200).json("Wrong email or password");
+
+            }
           } else {
-            res.status(400).json("Wrong email or password");
+            res.status(200).json("Wrong email or password");
           }
         } else {
-          res.status(400).json("Wrong email or password");
+          res.status(200).json("not found");
         }
-      } else {
-        res.status(404).json("Email not exist");
-      }
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+      })
+      .catch((err) => {
+        res.send(err);
+      });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // Toglle soft delete
@@ -254,26 +260,25 @@ const sendCodeResetPass = (req, res) => {
             subject: "Reset your passwor",
             text: `Please enter this code ${code} ,Thank you!`,
           };
-          await mailTransporter.sendMail(mail, (err, data) => {  
+          await mailTransporter.sendMail(mail, (err, data) => {
             if (err) {
               console.log(err);
             } else {
               // console.log(data);
               console.log("Email sent");
-              
+
               res.status(200).json(result);
             }
           });
         }
       } catch (error) {
-        console.log("ererererer",error);
+        console.log("ererererer", error);
       }
-      
-        // res.status(200).json(res);
-     
-    }).catch((err)=> console.log(err));
-};
 
+      // res.status(200).json(res);
+    })
+    .catch((err) => console.log(err));
+};
 
 module.exports = {
   resgister,
